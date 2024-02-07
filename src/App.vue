@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import SideBar from './components/sidebar/SideBar.vue';
-import  Player from './components/player/Player.vue';
+import SideBar from './components/sidebar/SideBar.vue'
+import Player from './components/player/Player.vue'
 </script>
 
 <template>
@@ -11,6 +11,4 @@ import  Player from './components/player/Player.vue';
   <Player />
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
