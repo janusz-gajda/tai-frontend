@@ -1,17 +1,27 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-import { useQueueStore } from '@/stores/queue';
-const queue = useQueueStore();
+    import {useQueueStore} from '@/stores/queue'
+    import QueueItem from './QueueItem.vue'
+    import draggable from 'vuedraggable'
+    const queue = useQueueStore()
 </script>
 
 <template>
-  <div>
-    <div v-for="song in queue.currentQueue" :key="song.id">
-      <h1>{{ song.title + ' - ' + song.author }}</h1>
-      
-    </div>
-  </div>
-  
+    <draggable class="grid grid-cols-1" v-model="queue.currentQueue" item-key="id">
+        <template #item="{element: song}">
+            <QueueItem
+                class="my-1"
+                :key="song.id"
+                :index="queue.currentQueue.indexOf(song) + 1"
+                :image="song.coverUrl"
+                :song="song"
+                :author-href="'#'"
+                :album-href="'#'"
+                :active="queue.currentSong?.id === song.id"
+                :id="song.id"
+            />
+        </template>
+    </draggable>
 </template>
 
 <style scoped></style>

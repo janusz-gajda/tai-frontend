@@ -1,16 +1,16 @@
 @font-face {
-  font-family: Figtree;
-  src: url('https://fonts.googleapis.com/css?family=Figtree');
+    font-family: Figtree;
+    src: url('https://fonts.googleapis.com/css?family=Figtree');
 }
 
 html,
 body,
 :root {
-  height: 100%;
-  background-color: black;
-  color-scheme: dark;
+    height: 100%;
+    background-color: black;
+    color-scheme: dark;
 }
 
 .next-img {
-  @apply h-16 md:h-20;
+    @apply h-16 md:h-20;
 }
