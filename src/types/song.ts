@@ -28,7 +28,7 @@ export type SongUpload = {
 
 export enum SongQuality {
     low = '128k.aac',
-    medium = '196k.aac',
+    medium = '192k.aac',
     high = '256k.aac',
     ultra = '320k.aac'
 }
