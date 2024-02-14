@@ -1,24 +1,24 @@
 <script setup lang="ts">
     import {ref} from 'vue'
     import {AiFillHeart, AiOutlineHeart} from 'vue3-icons/ai'
-    import {useQueueStore} from '@/stores/queue'
-    import type {Song} from '@/types/song'
-    const queue = useQueueStore()
+    import {usePlayerStore} from '@/stores/player'
+    import type {SongFrontend} from '@/types/song'
+    const playerStore = usePlayerStore()
     const props = defineProps<{
-        song: Song
+        song: SongFrontend
     }>()
 </script>
 
 <template>
     <button class="cursor-pointer hover:opacity-75 transition">
         <AiFillHeart
-            @click="queue.likeUnlikeSong(props.song.id)"
+            @click="playerStore.likeUnlikeSong(props.song.id)"
             v-if="song?.isLiked"
             style="color: #22c55e"
             size="25"
         />
         <AiOutlineHeart
-            @click="queue.likeUnlikeSong(props.song.id)"
+            @click="playerStore.likeUnlikeSong(props.song.id)"
             v-else
             style="color: white"
             size="25"

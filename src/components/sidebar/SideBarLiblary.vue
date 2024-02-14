@@ -2,20 +2,23 @@
     import {TbPlaylist} from 'vue3-icons/tb'
     import {AiOutlinePlus} from 'vue3-icons/ai'
     import SideBarPlaylistItem from './SideBarPlaylistItem.vue'
+    import {useModalStore} from '@/stores/modal'
+
+    const modalStore = useModalStore()
+
     const playlists = [
         {
-            name: 'Playlist 1',
-        }, 
-        {
-            name: 'Playlist 2',
+            name: 'Playlist 1'
         },
         {
-            name: 'Playlist 3',
+            name: 'Playlist 2'
+        },
+        {
+            name: 'Playlist 3'
         }
     ]
     function handleUpload() {
-        //TODO: handle file upload
-        alert('handle file upload')
+        modalStore.openModal('upload')
     }
 </script>
 
@@ -33,7 +36,11 @@
             />
         </div>
         <div class="flex flex-col gap-y-2 mt-4 px-3">
-            <SideBarPlaylistItem v-for="playlist in playlists" :key="playlist.name" :name="playlist.name" />
+            <SideBarPlaylistItem
+                v-for="playlist in playlists"
+                :key="playlist.name"
+                :name="playlist.name"
+            />
         </div>
     </div>
 </template>

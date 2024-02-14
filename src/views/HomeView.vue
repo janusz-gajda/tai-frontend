@@ -2,11 +2,13 @@
     import HomeHeader from '@/components/HomeHeader.vue'
     import ListItem from '@/components/ListItem.vue'
     import likedUrl from '@/assets/images/liked.png'
-    import { useQueueStore } from '@/stores/queue';
-    import PageContent from '@/components/PageContent.vue';
+    import {usePlayerStore} from '@/stores/player'
+    import {useContentStore} from '@/stores/content'
+    import PageContent from '@/components/PageContent.vue'
 
-    const queue = useQueueStore();
-
+    const palyerStore = usePlayerStore()
+    const contentStore = useContentStore()
+    contentStore.refreshContent()
 </script>
 
 <template>
@@ -25,8 +27,7 @@
             <div class="flex justify-between items-center">
                 <h1 class="text-white text-2xl font-semibold">Newest songs</h1>
             </div>
-            <PageContent :songs="queue.currentQueue"/>
-            
+            <PageContent :albums="contentStore.albums" />
         </main>
     </div>
 </template>

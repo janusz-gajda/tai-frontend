@@ -8,28 +8,30 @@
     import {HiSpeakerXMark, HiSpeakerWave} from 'vue3-icons/hi2'
     import PlayerDurationSlider from './PlayerDurationSlider.vue'
     import {TbPlaylist, TbPremiumRights} from 'vue3-icons/tb'
-    import type {Song} from '@/types/song'
+    import type {SongFrontend} from '@/types/song'
     import {Howl, Howler} from 'howler'
-    import {CollapsibleContent} from 'radix-vue'
-    import {useQueueStore} from '@/stores/queue'
+    import {usePlayerStore} from '@/stores/player'
+    import {useModalStore} from '@/stores/modal'
+    import {useContentStore} from '@/stores/content'
 
     const props = defineProps<{
-      song: Song | null
+        song: SongFrontend | null
     }>()
+    console.log(props.song)
 
-    const queue = useQueueStore()
+    const modalStore = useModalStore()
+    const playerStore = usePlayerStore()
+    const contentStore = useContentStore()
     const emit = defineEmits(['prevSong', 'nextSong'])
     const volume: Ref<number> = ref(1)
-    const seekPosition: Ref<number> = ref(0)
-    const duration: Ref<number> = ref(0)
     let oldVolume: number = 1
     let updateSeekPositionId: NodeJS.Timeout
 
     let sound: Howl = new Howl({
-        src: [props.song?.url || ''],
+        src: [props.song?.url + contentStore.quality || ''],
         preload: true,
         volume: volume.value,
-        autoplay: queue.isPlaying
+        autoplay: playerStore.isPlaying
     })
 
     sound.on('end', () => {
@@ -38,11 +40,11 @@
     })
 
     sound.on('load', () => {
-        duration.value = Math.floor(sound.duration())
+        playerStore.duration = Math.floor(sound.duration())
     })
 
     onMounted(() => {
-        if (queue.isPlaying) {
+        if (playerStore.isPlaying) {
             updateSeekPositionId = setInterval(updateSeekPosition, 300)
         }
     })
@@ -54,7 +56,7 @@
     })
 
     function togglePlay() {
-        queue.isPlaying = !queue.isPlaying
+        playerStore.isPlaying = !playerStore.isPlaying
         // if (queue.isPlaying) {
         //   sound.play()
         //   updateSeekPositionId = setInterval(updateSeekPosition, 300)
@@ -79,7 +81,7 @@
     }
 
     function previousSong() {
-        if (seekPosition.value > 1.5) {
+        if (playerStore.timeElapsed > 1.5) {
             changeSeekPosition(0)
         } else {
             sound.stop()
@@ -96,44 +98,67 @@
 
     function updateSeekPosition() {
         //@ts-ignore
-        seekPosition.value = sound.seek()
+        playerStore.timeElapsed = sound.seek()
     }
 
     function changeSeekPosition(newSeekPosition: number) {
         sound.seek(newSeekPosition)
-        seekPosition.value = newSeekPosition
+        playerStore.timeElapsed = newSeekPosition
     }
 
-    queue.$subscribe((mutation, state) => {
-        //@ts-ignore
-        if (mutation.events.key === 'value' && mutation.events.newValue === true) {
-            sound.play()
-            updateSeekPositionId = setInterval(updateSeekPosition, 300)
-            //@ts-ignore
-        } else if (mutation.events.key === 'value' && mutation.events.newValue === false) {
-            sound.pause()
-            clearInterval(updateSeekPositionId)
+    // playerStore.$subscribe((mutation, state) => {
+    //     //@ts-ignore
+    //     if (mutation.events.key === 'value' && mutation.events.newValue === true) {
+    //         sound.play()
+    //         updateSeekPositionId = setInterval(updateSeekPosition, 300)
+    //         //@ts-ignore
+    //     } else if (mutation.events.key === 'value' && mutation.events.newValue === false) {
+    //         sound.pause()
+    //         clearInterval(updateSeekPositionId)
+    //     }
+    // })
+
+    watch(
+        () => playerStore.isPlaying,
+        (isPlaying) => {
+            if (isPlaying) {
+                sound.play()
+                updateSeekPositionId = setInterval(updateSeekPosition, 300)
+            } else if (!isPlaying) {
+                sound.pause()
+                clearInterval(updateSeekPositionId)
+            }
         }
-    })
+    )
+
+    watch(
+        () => playerStore.newTimeElapsed,
+        (newTimeElapsed) => {
+            changeSeekPosition(newTimeElapsed)
+        }
+    )
 </script>
 
 <template>
     <div class="grid grid-cols-2 md:grid-cols-3 h-full">
         <div class="flex w-full justify-start">
-            <div class="flex items-center gap-x-4">
+            <div class="hidden md:flex items-center gap-x-4">
                 <MediaItem :song="props.song" />
                 <LikeButton v-if="props.song" :song="props.song" />
             </div>
+            <div class="flex md:hidden items-center gap-x-4">
+                <MediaItem @click="modalStore.openModal('player')" :song="props.song" />
+            </div>
         </div>
         <div class="flex md:hidden col-auto w-full justify-end items-center">
-            <RouterLink to="queue">
-                    <TbPlaylist size="32" class="cursor-pointer mr-2 " />
+            <RouterLink to="/queue">
+                <TbPlaylist size="32" class="cursor-pointer mr-2" />
             </RouterLink>
             <div
                 @click="togglePlay"
                 class="h-10 w-10 flex items-center justify-center rounded-full bg-white p-1 cursor-pointer mr-2 transistion"
             >
-                <BsPauseFill v-if="queue.isPlaying" class="text-black" size="30" />
+                <BsPauseFill v-if="playerStore.isPlaying" class="text-black" size="30" />
                 <BsPlayFill v-else class="text-black" size="30" />
             </div>
         </div>
@@ -150,7 +175,7 @@
                     @click="togglePlay"
                     class="flex items-center justify-center h-10 w-10 rounded-full bg-white p-1 cursor-pointer"
                 >
-                    <BsPauseFill v-if="queue.isPlaying" class="text-black" size="30" />
+                    <BsPauseFill v-if="playerStore.isPlaying" class="text-black" size="30" />
                     <BsPlayFill v-else class="text-black" size="30" />
                 </div>
                 <AiFillStepForward
@@ -161,14 +186,16 @@
             </div>
             <PlayerDurationSlider
                 :active="!!props.song"
-                :max-value="duration"
-                :value="Math.floor(seekPosition)"
-                @seek-change="(newSeekPosition: number) => changeSeekPosition(newSeekPosition)"
+                :max-value="playerStore.duration"
+                :value="Math.floor(playerStore.timeElapsed)"
+                @seek-change="
+                    (newSeekPosition: number) => playerStore.changeTimeElapsed(newSeekPosition)
+                "
             />
         </div>
         <div class="hidden md:flex w-full justify-end pr-6">
             <div class="flex items-center gap-x-2 w-[160px]">
-                <RouterLink to="queue">
+                <RouterLink to="/queue">
                     <TbPlaylist size="34" class="cursor-pointer" />
                 </RouterLink>
                 <HiSpeakerWave

@@ -14,3 +14,7 @@ body,
 .next-img {
     @apply h-16 md:h-20;
 }
+
+.hero-image {
+    background-size: cover;
+}

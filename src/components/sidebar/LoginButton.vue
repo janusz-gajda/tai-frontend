@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import {twMerge} from 'tailwind-merge'
-    import { useModalStore } from '@/stores/modal';
+    import {useModalStore} from '@/stores/modal'
 
     const modalStore = useModalStore()
     interface Props {
@@ -11,8 +11,6 @@
         disabled: false,
         type: 'button'
     })
-
-
 </script>
 
 <template>

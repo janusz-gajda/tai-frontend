@@ -25,7 +25,6 @@
             value.value = [newValue]
         }
     )
-
 </script>
 
 <template>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import {FaPlay} from 'vue3-icons/fa'
-    
+
     const props = defineProps<{
         size?: number
     }>()

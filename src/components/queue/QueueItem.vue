@@ -10,38 +10,38 @@
         DropdownMenuRoot,
         DropdownMenuTrigger
     } from 'radix-vue'
-    import {useQueueStore} from '@/stores/queue'
-    import type {Song} from '@/types/song'
+    import {usePlayerStore} from '@/stores/player'
+    import type {SongFrontend} from '@/types/song'
     import LikeButton from '../LikeButton.vue'
     import {BsThreeDots} from 'vue3-icons/bs'
-import { IoMdClose } from 'vue3-icons/io'
-import { AiOutlinePlusCircle } from 'vue3-icons/ai'
+    import {IoMdClose} from 'vue3-icons/io'
+    import {AiOutlinePlusCircle} from 'vue3-icons/ai'
 
     const props = defineProps<{
-        id: string
+        id: number
         image: string | undefined
         index: number
-        song: Song
+        song: SongFrontend
         authorHref: string
         albumHref: string
         active: boolean
     }>()
 
     const menu: Ref<boolean> = ref(false)
-    const queue = useQueueStore()
+    const playerStore = usePlayerStore()
 
     function handlePlayChange() {
         if (props.active) {
-            queue.isPlaying = !queue.isPlaying
+            playerStore.isPlaying = !playerStore.isPlaying
         } else {
-            queue.changeSong(props.id)
+            playerStore.changeSong(props.id)
         }
     }
 </script>
 
 <template>
-    <div 
-        class="relative group flex items-center justify-between rounded-md overflow-hidden gap-x-4 hover:bg-neutral-700  transition pr-4"
+    <div
+        class="relative group flex items-center justify-between rounded-md overflow-hidden gap-x-4 hover:bg-neutral-700 transition pr-4"
         :class="{
             'bg-neutral-700 border-emerald-700 border-solid border-2': props.active,
             'bg-neutral-800': !props.active
@@ -52,7 +52,7 @@ import { AiOutlinePlusCircle } from 'vue3-icons/ai'
                 @click="handlePlayChange"
                 class="transition ml-4 rounded-full hidden items-center justify-center bg-green-500 p-3 md:p-4 drop-shadow-md right-5 group-hover:flex opacity-100 hover:scale-110 cursor-pointer"
             >
-                <FaPlay v-if="!props.active || !queue.isPlaying" class="text-black" />
+                <FaPlay v-if="!props.active || !playerStore.isPlaying" class="text-black" />
                 <FaPause v-else class="text-black" />
             </div>
             <h1 class="relative group-hover:hidden ml-4 px-4 w-[40px] md:w-[48px] text-gray-300">
@@ -79,20 +79,27 @@ import { AiOutlinePlusCircle } from 'vue3-icons/ai'
             </div>
         </div>
         <div class="truncate">
-            <a :href="props.albumHref" class="hidden md:inline font-medium truncate text-gray-400 cursor-pointer">{{
-                props.song.album
-            }}</a>
+            <a
+                :href="props.albumHref"
+                class="hidden md:inline font-medium truncate text-gray-400 cursor-pointer"
+                >{{ props.song.album }}</a
+            >
         </div>
         <div class="flex items-center flex-row gap-x-2">
-            <LikeButton :song="props.song" />   
+            <LikeButton :song="props.song" />
             <DropdownMenuRoot v-model:open="menu">
                 <DropdownMenuTrigger>
-                    <AiOutlinePlusCircle aria-label="Add to playlist" class="cursor-pointer" size="26" />
+                    <AiOutlinePlusCircle
+                        aria-label="Add to playlist"
+                        class="cursor-pointer"
+                        size="26"
+                    />
                 </DropdownMenuTrigger>
                 <DropdownMenuPortal>
                     <DropdownMenuContent
                         class="w-40 bg-neutral-600 rounded-md items-center justify-center gap-y-2"
-                    >   <DropdownMenuLabel>
+                    >
+                        <DropdownMenuLabel>
                             <p>Add to playlist</p>
                         </DropdownMenuLabel>
                         <DropdownMenuItem value="Delete">
@@ -101,7 +108,12 @@ import { AiOutlinePlusCircle } from 'vue3-icons/ai'
                     </DropdownMenuContent>
                 </DropdownMenuPortal>
             </DropdownMenuRoot>
-            <IoMdClose @click="queue.deleteFromQueue(props.id)" aria-label="Remove from queue" class="cursor-pointer" size="26" />
+            <IoMdClose
+                @click="playerStore.deleteFromQueue(props.id)"
+                aria-label="Remove from queue"
+                class="cursor-pointer"
+                size="26"
+            />
         </div>
     </div>
 </template>

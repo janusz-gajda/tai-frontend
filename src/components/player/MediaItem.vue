@@ -1,9 +1,9 @@
 <script setup lang="ts">
     import defaultUrl from '@/assets/images/music-placeholder.png'
-    import type {Song} from '@/types/song'
+    import type {SongFrontend} from '@/types/song'
     import {AspectRatio} from 'radix-vue'
     const props = defineProps<{
-        song: Song | null
+        song: SongFrontend | null
     }>()
 </script>
 
@@ -11,7 +11,7 @@
     <div
         class="flex items-center gap-x-3 cursor-pointer hover:bg-neutral-800/50 w-full p-2 rounded-md"
     >
-        <div class="relative rounded-md h-[48px] w-[48px] md:h-[64px] md:w-[64px]  overflow-hidden">
+        <div class="relative rounded-md h-[48px] w-[48px] md:h-[64px] md:w-[64px] overflow-hidden">
             <div class="flex next-img">
                 <img
                     :src="props.song?.coverUrl ? props.song.coverUrl : defaultUrl"

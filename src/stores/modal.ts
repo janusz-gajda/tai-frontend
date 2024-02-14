@@ -3,14 +3,14 @@ import {defineStore} from 'pinia'
 
 export const useModalStore = defineStore('modal', () => {
     const isOpen = ref(false)
-    const activeModal = ref("")
+    const activeModal = ref('')
 
     function openModal(modal: string) {
         isOpen.value = true
         activeModal.value = modal
     }
 
-    function closeModal(){
+    function closeModal() {
         isOpen.value = false
     }
 
