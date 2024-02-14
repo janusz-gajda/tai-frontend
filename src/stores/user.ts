@@ -41,7 +41,15 @@ export const useUserStore = defineStore(
         function setJWT(token: string): void {
             jwt.value = token
         }
-        return {setUser, getUser, id, name, email, googleId, jwt, logout, getJWT, setJWT}
+
+        function clear() {
+            id.value = 0
+            name.value = ''
+            email.value = ''
+            googleId.value = ''
+            jwt.value = ''
+        }
+        return {setUser, getUser, id, name, email, googleId, jwt, logout, getJWT, setJWT, clear}
     },
     {
         persist: true

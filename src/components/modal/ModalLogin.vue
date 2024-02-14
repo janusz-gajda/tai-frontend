@@ -10,8 +10,10 @@
     import type {CallbackTypes} from 'vue3-google-login'
 
     import router from '@/router'
+import { useContentStore } from '@/stores/content'
 
     const userStore = useUserStore()
+    const contentStore = useContentStore()
 
     const emits = defineEmits(['update:isOpen', 'register'])
 
@@ -29,7 +31,7 @@
                 error.value = ''
                 emits('update:isOpen')
                 userStore.setUser(user)
-                console.log(userStore.getUser())
+                contentStore.refreshContent(userStore.id)
             })
             .catch((err: Error) => {
                 error.value = err.message.capitalize()
@@ -42,7 +44,7 @@
                 error.value = ''
                 emits('update:isOpen')
                 userStore.setUser(user)
-                console.log(userStore.getUser())
+                contentStore.refreshContent(userStore.id)
             })
             .catch((err: Error) => {
                 error.value = err.message.capitalize()

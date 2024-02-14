@@ -16,7 +16,7 @@
 <template>
     <button
         @click="onClick"
-        class="relative group flex items-center rounded-md overflow-hidden gap-x-4 bg-neutral-100/10 hover:bg-neutral-100/20 transition pr-4"
+        class="relative group flex flex-row justify-start items-center rounded-md overflow-hidden gap-x-4 bg-neutral-100/10 hover:bg-neutral-100/20 transition pr-4"
     >
         <div class="relative min-h-[64px] min-w-[64px]">
             <div class="flex next-img">

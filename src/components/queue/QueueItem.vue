@@ -1,21 +1,14 @@
 <script setup lang="ts">
     import {ref, type Ref} from 'vue'
     import {FaPlay, FaPause} from 'vue3-icons/fa'
-    import {
-        AspectRatio,
-        DropdownMenuContent,
-        DropdownMenuItem,
-        DropdownMenuLabel,
-        DropdownMenuPortal,
-        DropdownMenuRoot,
-        DropdownMenuTrigger
-    } from 'radix-vue'
+    
     import {usePlayerStore} from '@/stores/player'
     import type {SongFrontend} from '@/types/song'
     import LikeButton from '../LikeButton.vue'
     import {BsThreeDots} from 'vue3-icons/bs'
     import {IoMdClose} from 'vue3-icons/io'
     import {AiOutlinePlusCircle} from 'vue3-icons/ai'
+    import DropdownManagePlaylists from '@/components/DropdownManagePlaylists.vue'
 
     const props = defineProps<{
         id: number
@@ -27,7 +20,7 @@
         active: boolean
     }>()
 
-    const menu: Ref<boolean> = ref(false)
+    
     const playerStore = usePlayerStore()
 
     function handlePlayChange() {
@@ -87,27 +80,7 @@
         </div>
         <div class="flex items-center flex-row gap-x-2">
             <LikeButton :song="props.song" />
-            <DropdownMenuRoot v-model:open="menu">
-                <DropdownMenuTrigger>
-                    <AiOutlinePlusCircle
-                        aria-label="Add to playlist"
-                        class="cursor-pointer"
-                        size="26"
-                    />
-                </DropdownMenuTrigger>
-                <DropdownMenuPortal>
-                    <DropdownMenuContent
-                        class="w-40 bg-neutral-600 rounded-md items-center justify-center gap-y-2"
-                    >
-                        <DropdownMenuLabel>
-                            <p>Add to playlist</p>
-                        </DropdownMenuLabel>
-                        <DropdownMenuItem value="Delete">
-                            <p class="ml-2">List of playlists</p>
-                        </DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenuPortal>
-            </DropdownMenuRoot>
+            <DropdownManagePlaylists :song="props.song" />
             <IoMdClose
                 @click="playerStore.deleteFromQueue(props.id)"
                 aria-label="Remove from queue"

@@ -8,7 +8,6 @@
 
     const palyerStore = usePlayerStore()
     const contentStore = useContentStore()
-    contentStore.refreshContent()
 </script>
 
 <template>
@@ -23,11 +22,11 @@
                 </div>
             </div>
         </HomeHeader>
-        <main class="mt-2 mb-7 px-6">
+        <main class="mt-2 px-6">
             <div class="flex justify-between items-center">
                 <h1 class="text-white text-2xl font-semibold">Newest songs</h1>
             </div>
-            <PageContent :albums="contentStore.albums" />
+            <PageContent :albums="contentStore.albums" :playlists="contentStore.playlists" />
         </main>
     </div>
 </template>

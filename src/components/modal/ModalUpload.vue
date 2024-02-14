@@ -7,6 +7,9 @@
     import type {SongUpload} from '@/types/song'
     import {uploadSongs} from '@/api/upload'
     import {useContentStore} from '@/stores/content'
+    import { useUserStore } from '@/stores/user'
+
+    const userStore = useUserStore()
 
     async function fileChanged(event: Event): Promise<AlbumUpload[]> {
         const target = event.target as HTMLInputElement
@@ -74,7 +77,7 @@
             uploadSongs(filesToUpload)
                 .then(() => {
                     console.log('File upload completed')
-                    contentStore.refreshContent()
+                    contentStore.refreshContent(userStore.id)
                     console.log(contentStore.songs)
                     console.log(contentStore.albums)
                 })

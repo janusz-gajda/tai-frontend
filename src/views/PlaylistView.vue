@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import {ref, type Ref} from 'vue'
+    import {ref, watch, type Ref} from 'vue'
     import HomeHeader from '@/components/HomeHeader.vue'
     import {useContentStore} from '@/stores/content'
     import {FaPlay, FaPause} from 'vue3-icons/fa'
@@ -9,80 +9,90 @@
     import {IoMdClose} from 'vue3-icons/io'
     import {AiOutlinePlusCircle} from 'vue3-icons/ai'
     import defaultCoverUrl from '@/assets/images/music-placeholder.png'
-    import DropdownManagePlaylists from '@/components/DropdownManagePlaylists.vue'
+    import { useRoute } from 'vue-router'
+    import  DropdownManagePlaylists from '@/components/DropdownManagePlaylists.vue'
+import { removeFromPlaylist } from '@/api/collections'
 
     const props = defineProps<{
         id: number
     }>()
 
+    const route = useRoute()
     const contentStore = useContentStore()
     const playerStore = usePlayerStore()
 
-    const menu = ref(false)
 
     function handlePlayChange(id: number, isCurrentSong: boolean) {
         if (isCurrentSong) {
             playerStore.togglePlay()
         } else {
-            if (playerStore.albumId === props.id) {
-                playerStore.changeSongAlbum(id, props.id)
+            if (playerStore.playlistId === props.id) {
+                playerStore.changeSongPlaylist(id, props.id)
             } else {
                 //@ts-ignore
-                playerStore.playAlbum(album?.songs, props.id)
-                playerStore.changeSongAlbum(id, props.id)
+                playerStore.playPlaylist(playlist.value.songs, props.id)
+                playerStore.changeSongPlaylist(id, props.id)
             }
         }
     }
 
-    function playAlbum() {
-        if (playerStore.albumId === props.id) {
+    function playPlaylist() {
+        if (playerStore.playlistId === props.id) {
             playerStore.togglePlay()
             return
         }
-        if (!album) return
-        playerStore.playAlbum(album.songs, props.id)
+        if (!playlist.value) return
+        playerStore.playPlaylist(playlist.value.songs, props.id)
     }
 
-    const album = contentStore.getAlbumById(props.id)
+    function handleRemoveSong(id: number) {
+        removeFromPlaylist(id, props.id).then(() => {
+            contentStore.removeSongFromPlaylist(props.id, id)
+        })
+
+    }
+
+    watch(
+        () => route.params.id, 
+         newId => {
+            playlist.value = contentStore.getPlaylistById(newId as unknown as number)
+        })
+
+    const playlist = ref(contentStore.getPlaylistById(props.id))
 </script>
 
 <template>
     <div class="bg-neutral-900 rounded-lg h-full w-full overflow-hidden overflow-y-auto">
         <HomeHeader />
-        <main class="mt-2 mb-7 px-6">
+        <main class="mt-2 mb-40 px-6" v-if="playlist">
             <div class="flex justify-between items-center">
                 <div class="flex justify-start mb-3">
                     <div class="max-w-[160px] rounded-md">
-                        <img
-                            :src="album?.coverUrl ? album?.coverUrl : defaultCoverUrl"
-                            alt="Image"
-                            class="w-full rounded-md object-cover"
-                        />
                     </div>
 
                     <div class="flex flex-col justify-end mb-3 ml-2">
-                        <p class="text-white font-medium text-3xl">{{ album?.name }}</p>
-                        <p class="text-neutral-400 text-xl">{{ album?.author }}</p>
+                        <p class="text-white font-medium text-3xl">{{ playlist.name }}</p>
+                        <p class="text-neutral-400 text-xl">{{ playlist?.description }}</p>
                     </div>
                 </div>
                 <div class="relative">
-                    <div
-                        @click="playAlbum"
-                        class="transition rounded-full flex items-center justify-center bg-green-500 p-4 drop-shadow-md right-5 opacity-100 hover:scale-110 cursor-pointer"
+                    <div v-if="playlist.songs.length > 0"
+                        @click="playPlaylist"
+                        class="transition rounded-full flex items-center justify-center bg-green-500 p-2 drop-shadow-md right-5 opacity-100 hover:scale-110 cursor-pointer"
                     >
                         <FaPlay
-                            size="32"
-                            v-if="!playerStore.isPlaying || playerStore.albumId !== album?.id"
+                            size="25"
+                            v-if="!playerStore.isPlaying || playerStore.albumId !== playlist?.id"
                             class="text-black"
                         />
-                        <FaPause size="32" v-else class="text-black" />
+                        <FaPause size="25" v-else class="text-black" />
                     </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 gap-y-2">
                 <div
-                    v-for="(song, index) in album?.songs"
+                    v-for="(song, index) in playlist?.songs"
                     :key="song.id"
                     class="relative group flex items-center justify-between rounded-md overflow-hidden gap-x-4 bg-neutral-800 hover:bg-neutral-700 transition pr-4"
                 >
@@ -122,6 +132,12 @@
                     <div class="flex items-center flex-row gap-x-2">
                         <LikeButton :song="song" />
                         <DropdownManagePlaylists :song="song" />
+                        <IoMdClose
+                            @click="handleRemoveSong(song.id)"
+                            aria-label="Remove from queue"
+                            class="cursor-pointer"
+                            size="26"
+                        />
                     </div>
                 </div>
             </div>

@@ -3,6 +3,8 @@ import HomeView from '../views/HomeView.vue'
 import SearchView from '@/views/SearchView.vue'
 import QueueView from '@/views/QueueView.vue'
 import AlbumView from '@/views/AlbumView.vue'
+import PlaylistView from '@/views/PlaylistView.vue'
+import SettingsView from '@/views/SettingsView.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +29,17 @@ const router = createRouter({
             name: 'album',
             props: true,
             component: AlbumView
+        },
+        {
+            path: '/palylist/:id',
+            name: 'playlist',
+            props: true,
+            component: PlaylistView
+        },
+        {
+            path: '/settings',
+            name: 'settings',
+            component: SettingsView
         }
     ]
 })

@@ -2,7 +2,7 @@ import {ref, computed, type Ref} from 'vue'
 import {defineStore} from 'pinia'
 import type {Collection} from '@/types/collections'
 import type {SongBackend, SongFrontend} from '@/types/song'
-import {SonqQuality} from '@/types/song'
+import {SongQuality} from '@/types/song'
 import {getCollections} from '@/api/collections'
 import config from '@/config'
 import type {AlbumFrontend} from '@/types/album'
@@ -12,13 +12,13 @@ export const useContentStore = defineStore('content', () => {
     const songs: Ref<SongFrontend[]> = ref([])
     const albums: Ref<AlbumFrontend[]> = ref([])
     const playlists: Ref<PlaylistFrontend[]> = ref([])
-    const quality: Ref<SonqQuality> = ref(SonqQuality.ultra)
+    const quality: Ref<SongQuality> = ref(SongQuality.ultra)
     const favourites: Ref<SongFrontend[]> = ref([])
 
-    function refreshContent() {
+    function refreshContent(userId: number) {
         albums.value = []
         playlists.value = []
-        getCollections().then((collections) => {
+        getCollections().then((collections: any) => {
             //first pass: get only songs, so we can achive reactivity later
             for (const collection of collections) {
                 if (collection.type !== 'ALBUM') {
@@ -36,10 +36,8 @@ export const useContentStore = defineStore('content', () => {
                 if (collection.type === 'ALBUM') {
                     albums.value.push(convertAlbum(collection))
                 }
-                if (collection.type === 'PLAYLIST') {
-                    if (collection.songs.length === 0) {
-                        continue
-                    } else if (collection.name.match('Favourite songs')) {
+                if (collection.type === 'PLAYLIST' && collection.creatorId === userId) {
+                    if (collection.name.match('Favourite songs')) {
                         favourites.value = []
                         for (const song of collection.songs) {
                             const index = songs.value.findIndex((s) => s.id === song.id)
@@ -106,6 +104,54 @@ export const useContentStore = defineStore('content', () => {
         return playlists.value.find((playlist) => playlist.id === id)
     }
 
+    function getPlaylistsBySongId(id: number): PlaylistFrontend[] {
+        return playlists.value.filter((playlist) => playlist.songs.findIndex((song) => song.id === id) !== -1)
+    }
+
+    function getDataForDropdown(songId: number): Map<number, boolean>{
+        const temp = new Map<number, boolean>()
+        for(const playlist of playlists.value){
+            if(playlist.songs.findIndex((song) => song.id === songId) !== -1){
+                temp.set(playlist.id, true)
+            } else {
+                temp.set(playlist.id, false)
+            }
+        }
+        return temp
+    }
+
+    function addSongToPlaylist(playlistId: number, songId: number) {
+        const index = playlists.value.findIndex((playlist) => playlist.id === playlistId)
+        playlists.value[index].songs.push(songs.value[songs.value.findIndex((song) => song.id === songId)])
+    }
+
+    function removeSongFromPlaylist(playlistId: number, songId: number) {
+        const index = playlists.value.findIndex((playlist) => playlist.id === playlistId)
+        playlists.value[index].songs = playlists.value[index].songs.filter((song) => song.id !== songId)
+    }
+
+    function getPlaylistsBySearch(search: string): PlaylistFrontend[] {
+        return playlists.value.filter((playlist) => playlist.name.toLowerCase().includes(search.toLowerCase()))
+    }
+
+    function getAlbumsBySearch(search: string): AlbumFrontend[] {
+        return albums.value.filter((album) => album.name.toLowerCase().includes(search.toLowerCase()) 
+        || album.author.toLowerCase().includes(search.toLowerCase())
+        || album.songs.some((song) => song.title.toLowerCase().includes(search.toLowerCase())))
+    }
+
+    function getSongsBySearch(search: string): SongFrontend[] {
+        return songs.value.filter((song) => song.title.toLowerCase().includes(search.toLowerCase()) 
+        || song.author.toLowerCase().includes(search.toLowerCase()))
+    }
+
+    function clear(){
+        songs.value = []
+        albums.value = []
+        playlists.value = []
+        favourites.value = []
+    }
+
     return {
         songs,
         albums,
@@ -114,6 +160,14 @@ export const useContentStore = defineStore('content', () => {
         favourites,
         refreshContent,
         getAlbumById,
-        getPlaylistById
+        getPlaylistById,
+        getPlaylistsBySongId,
+        getDataForDropdown,
+        addSongToPlaylist,
+        removeSongFromPlaylist,
+        clear,
+        getPlaylistsBySearch,
+        getAlbumsBySearch,
+        getSongsBySearch
     }
 })

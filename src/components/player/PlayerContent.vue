@@ -13,6 +13,10 @@
     import {usePlayerStore} from '@/stores/player'
     import {useModalStore} from '@/stores/modal'
     import {useContentStore} from '@/stores/content'
+    import  SettingsButton from '../SettingsButton.vue'
+    import { DropdownMenuRoot, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioItem, DropdownMenuRadioGroup, DropdownMenuItemIndicator } from 'radix-vue'
+    import {SongQuality} from '@/types/song'
+    import { FaCheck } from 'vue3-icons/fa'
 
     const props = defineProps<{
         song: SongFrontend | null
@@ -23,6 +27,10 @@
     const playerStore = usePlayerStore()
     const contentStore = useContentStore()
     const emit = defineEmits(['prevSong', 'nextSong'])
+    
+    const quality: Ref<SongQuality> = ref(contentStore.quality)
+    const menu: Ref<boolean> = ref(false)
+    
     const volume: Ref<number> = ref(1)
     let oldVolume: number = 1
     let updateSeekPositionId: NodeJS.Timeout
@@ -57,13 +65,6 @@
 
     function togglePlay() {
         playerStore.isPlaying = !playerStore.isPlaying
-        // if (queue.isPlaying) {
-        //   sound.play()
-        //   updateSeekPositionId = setInterval(updateSeekPosition, 300)
-        // } else {
-        //   sound.pause()
-        //   clearInterval(updateSeekPositionId)
-        // }
     }
 
     function toogleMute() {
@@ -106,17 +107,12 @@
         playerStore.timeElapsed = newSeekPosition
     }
 
-    // playerStore.$subscribe((mutation, state) => {
-    //     //@ts-ignore
-    //     if (mutation.events.key === 'value' && mutation.events.newValue === true) {
-    //         sound.play()
-    //         updateSeekPositionId = setInterval(updateSeekPosition, 300)
-    //         //@ts-ignore
-    //     } else if (mutation.events.key === 'value' && mutation.events.newValue === false) {
-    //         sound.pause()
-    //         clearInterval(updateSeekPositionId)
-    //     }
-    // })
+    function handleQualityChange(event: Event, quality: SongQuality) {
+        event.preventDefault()
+        event.stopPropagation()
+        contentStore.quality = quality
+    }
+
 
     watch(
         () => playerStore.isPlaying,
@@ -195,6 +191,46 @@
         </div>
         <div class="hidden md:flex w-full justify-end pr-6">
             <div class="flex items-center gap-x-2 w-[160px]">
+                <DropdownMenuRoot v-model:open="menu">
+                    <DropdownMenuTrigger>
+                        <SettingsButton class="scale-75"/>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuPortal>
+                        <DropdownMenuContent
+                            class="w-40 bg-neutral-900 border-neutral-800 border-solid border-2 rounded-md items-center justify-center gap-y-2"
+                        >
+                            <DropdownMenuLabel>
+                                <p class="text-neutral-400 font-semibold ml-2 mb-2">Select quality</p>
+                            </DropdownMenuLabel>
+                            <DropdownMenuRadioGroup v-model="quality">
+                                <DropdownMenuRadioItem :value="SongQuality.low" class="relative flex pl-7 py-1 flex-row justify-start items-center hover:bg-neutral-800 rounded-md cursor-pointer"  @click="(event: any) => event.stopPropagation()" @select="(event) => handleQualityChange(event, SongQuality.low)">
+                                    <DropdownMenuItemIndicator class="absolute left-1 top-2.5">
+                                            <FaCheck />
+                                    </DropdownMenuItemIndicator>
+                                    <p>Low</p>
+                                </DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem :value="SongQuality.medium" class="relative flex pl-7 py-1 flex-row justify-start items-center hover:bg-neutral-800 rounded-md cursor-pointer"  @click="(event: any) => event.stopPropagation()" @select="(event) => handleQualityChange(event, SongQuality.medium)">
+                                    <DropdownMenuItemIndicator class="absolute left-1 top-2.5">
+                                            <FaCheck />
+                                    </DropdownMenuItemIndicator>
+                                    <p>Medium</p>
+                                </DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem :value="SongQuality.high" class="relative flex pl-7 py-1 flex-row justify-start items-center hover:bg-neutral-800 rounded-md cursor-pointer"  @click="(event: any) => event.stopPropagation()" @select="(event) => handleQualityChange(event, SongQuality.high)">
+                                    <DropdownMenuItemIndicator class="absolute left-1 top-2.5">
+                                            <FaCheck />
+                                    </DropdownMenuItemIndicator>
+                                    <p>High</p>
+                                </DropdownMenuRadioItem>
+                                <DropdownMenuRadioItem :value="SongQuality.ultra" class="relative flex pl-7 py-1 flex-row justify-start items-center hover:bg-neutral-800 rounded-md cursor-pointer"  @click="(event: any) => {event.preventDefault(); event.stopPropagation()}" @select="(event) => handleQualityChange(event, SongQuality.ultra)">
+                                    <DropdownMenuItemIndicator class="absolute left-1 top-2.5">
+                                            <FaCheck />
+                                    </DropdownMenuItemIndicator>
+                                    <p>Ultra</p>
+                                </DropdownMenuRadioItem>
+                            </DropdownMenuRadioGroup>
+                        </DropdownMenuContent>
+                    </DropdownMenuPortal>
+                </DropdownMenuRoot>
                 <RouterLink to="/queue">
                     <TbPlaylist size="34" class="cursor-pointer" />
                 </RouterLink>

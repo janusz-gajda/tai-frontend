@@ -3,10 +3,17 @@
     import {FaGoogle} from 'vue3-icons/fa'
     import {ref, watch, type Ref} from 'vue'
     import Input from './Input.vue'
+    import { register } from '@/api/auth';
+    import type { User } from '@/types/user';
+    import { useUserStore } from '@/stores/user';
+    import type { ResponseError } from '@/types/responses';
 
     const props = defineProps<{
         isOpen: boolean
     }>()
+
+    const emit = defineEmits(['update:isOpen', 'login'])
+    const error: Ref<string> = ref('')
 
     const username: Ref<string> = ref('')
     const email: Ref<string> = ref('')
@@ -46,6 +53,20 @@
         }
         return ''
     }
+
+    function handleRegister() {
+        if(usernameError(username.value) === '' 
+            && emailError(email.value) === '' 
+            && passwordError(password.value) === '' 
+            && repeatPasswordError(repeatPassword.value) === '') {
+                register(username.value, email.value, password.value).then((user: User) => {
+                    useUserStore().setUser(user)
+                    emit('update:isOpen', false)
+                }).catch((err: ResponseError) => {
+                    error.value = err.message
+                })
+        }
+    }
 </script>
 
 <template>
@@ -54,6 +75,7 @@
         title="Register"
         description="Register to access all features"
         :is-open="props.isOpen"
+        :error="error"
     >
         <div class="gap-x-3">
             <Input
@@ -80,7 +102,7 @@
                 @update:value="(value) => (repeatPassword = value)"
                 :err-fun="repeatPasswordError"
             />
-            <button class="w-full rounded-full bg-green-500 px-4 py-3 mt-10 text-white font-bold">
+            <button @click="handleRegister" class="w-full rounded-full bg-green-500 px-4 py-3 mt-10 text-white font-bold">
                 Register
             </button>
             <button

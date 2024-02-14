@@ -7,7 +7,7 @@
 </script>
 
 <template>
-    <draggable class="grid grid-cols-1" v-model="palyerStore.currentQueue" item-key="id">
+    <draggable class="grid grid-cols-1 mb-40" v-model="palyerStore.currentQueue" item-key="id">
         <template #item="{element: song}">
             <QueueItem
                 class="my-1"

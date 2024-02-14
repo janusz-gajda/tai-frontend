@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-    import {ref, computed, defineEmits, type Ref} from 'vue'
+    import {ref, watch, defineEmits, type Ref} from 'vue'
 
     const emit = defineEmits(['update:value'])
 
@@ -11,17 +11,16 @@
         errFun: (value: string) => string
     }>()
 
-    const model = computed({
-        get(): string {
-            return props.value || ''
-        },
-        set(newValue): void {
-            emit('update:value', newValue)
-            error.value = props.errFun(newValue)
-        }
-    })
+
+    const model = ref(props.value || '')
 
     const error: Ref<string> = ref('')
+
+    watch(model, (newValue, oldValue) => {
+        emit('update:value', newValue)
+        error.value = props.errFun(newValue)
+        
+    })
 </script>
 
 <template>
@@ -33,7 +32,7 @@
             :type="props.type"
             :placeholder="props.placeholder"
         />
-        <p v-if="error" class="absolute top-4 left-6 text-red-500">{{ error }}</p>
+        <p v-if="error.length > 0" class="absolute top-4 left-6 text-red-500">{{ error }}</p>
     </div>
 </template>
 

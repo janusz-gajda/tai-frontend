@@ -9,20 +9,22 @@
     import SettingsButton from './SettingsButton.vue'
     import {useContentStore} from '@/stores/content'
     import {connect} from 'http2'
+import { usePlayerStore } from '@/stores/player'
+import router from '@/router'
 
     const userStore = useUserStore()
     const modalStore = useModalStore()
     const contentStore = useContentStore()
+    const playerStore = usePlayerStore()
 
     function logout() {
         userStore.logout()
+        contentStore.clear()
+        playerStore.clear()
     }
 
-    function handleRefresh() {
-        contentStore.refreshContent()
-        console.log(contentStore.songs)
-        console.log(contentStore.albums)
-        console.log(contentStore.playlists)
+    function handleSettings() {
+        router.push({name: "settings"})
     }
 </script>
 
@@ -74,7 +76,7 @@
                 <LoginButton @click="logout" class="bg-neutral-500 text-neutral-300 px-6 py-2">
                     Log out
                 </LoginButton>
-                <SettingsButton @click="handleRefresh" />
+                <SettingsButton @click="handleSettings" />
             </div>
         </div>
         <slot />

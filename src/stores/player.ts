@@ -14,6 +14,7 @@ export const usePlayerStore = defineStore(
         const oldVolume: Ref<number> = ref(1)
         const newTimeElapsed: Ref<number> = ref(0)
         const albumId: Ref<number> = ref(0)
+        const playlistId: Ref<number> = ref(0)
 
         function nextSong() {
             const nextIndex =
@@ -46,13 +47,31 @@ export const usePlayerStore = defineStore(
             }
         }
 
-        function changeSong(id: number, albId = 0) {
+        function changeSong(id: number) {
+            currentSong.value =
+                currentQueue.value[currentQueue.value.findIndex((song) => song.id === id)]
+            if (!isPlaying.value) {
+                isPlaying.value = true
+            }
+            albumId.value = 0
+        }
+
+        function changeSongAlbum(id: number, albId: number) {
             currentSong.value =
                 currentQueue.value[currentQueue.value.findIndex((song) => song.id === id)]
             if (!isPlaying.value) {
                 isPlaying.value = true
             }
             albumId.value = albId
+        }
+
+        function changeSongPlaylist(id: number, plId: number) {
+            currentSong.value =
+                currentQueue.value[currentQueue.value.findIndex((song) => song.id === id)]
+            if (!isPlaying.value) {
+                isPlaying.value = true
+            }
+            playlistId.value = plId
         }
 
         //TODO: przerobić podczas spinania z backendem
@@ -82,7 +101,16 @@ export const usePlayerStore = defineStore(
             currentQueue.value = songs
             currentSong.value = songs[0]
             isPlaying.value = true
-            albumId.value = id
+            albumId.value = id,
+            playlistId.value = 0
+        }
+
+        function playPlaylist(songs: SongFrontend[], id: number) {
+            currentQueue.value = songs
+            currentSong.value = songs[0]
+            isPlaying.value = true
+            playlistId.value = id, 
+            albumId.value = 0
         }
 
         function mute() {
@@ -113,6 +141,19 @@ export const usePlayerStore = defineStore(
             albumId.value = 0
         }
 
+        function clear() {
+            currentQueue.value = []
+            currentSong.value = null
+            isPlaying.value = false
+            timeElapsed.value = 0
+            duration.value = 0
+            volume.value = 1
+            oldVolume.value = 1
+            newTimeElapsed.value = 0
+            albumId.value = 0
+            playlistId.value = 0
+        }
+
         return {
             currentQueue,
             currentSong,
@@ -123,6 +164,7 @@ export const usePlayerStore = defineStore(
             oldVolume,
             newTimeElapsed,
             albumId,
+            playlistId,
             nextSong,
             previousSong,
             addSong,
@@ -137,7 +179,11 @@ export const usePlayerStore = defineStore(
             togglePlay,
             changeTimeElapsed,
             replaceWithCollection,
-            playAlbum
+            playAlbum,
+            playPlaylist,
+            changeSongAlbum,
+            changeSongPlaylist,
+            clear
         }
     },
     {

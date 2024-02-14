@@ -26,7 +26,7 @@ export type SongUpload = {
     filename: string | undefined
 }
 
-export enum SonqQuality {
+export enum SongQuality {
     low = '128k.aac',
     medium = '196k.aac',
     high = '256k.aac',
