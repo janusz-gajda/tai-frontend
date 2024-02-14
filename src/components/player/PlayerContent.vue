@@ -28,17 +28,14 @@
     const contentStore = useContentStore()
     const emit = defineEmits(['prevSong', 'nextSong'])
     
-    const quality: Ref<SongQuality> = ref(contentStore.quality)
     const menu: Ref<boolean> = ref(false)
     
-    const volume: Ref<number> = ref(1)
-    let oldVolume: number = 1
     let updateSeekPositionId: NodeJS.Timeout
 
     let sound: Howl = new Howl({
         src: [props.song?.url + contentStore.quality || ''],
         preload: true,
-        volume: volume.value,
+        volume: playerStore.volume,
         autoplay: playerStore.isPlaying
     })
 
@@ -68,16 +65,16 @@
     }
 
     function toogleMute() {
-        if (volume.value !== 0) {
-            oldVolume = volume.value
+        if (playerStore.volume !== 0) {
+            playerStore.oldVolume = playerStore.volume
             changeVolume(0)
         } else {
-            changeVolume(oldVolume)
+            changeVolume(playerStore.oldVolume)
         }
     }
 
     function changeVolume(newVolume: number) {
-        volume.value = newVolume
+        playerStore.volume = newVolume
         sound.volume(newVolume)
     }
 
@@ -202,7 +199,7 @@
                             <DropdownMenuLabel>
                                 <p class="text-neutral-400 font-semibold ml-2 mb-2">Select quality</p>
                             </DropdownMenuLabel>
-                            <DropdownMenuRadioGroup v-model="quality">
+                            <DropdownMenuRadioGroup v-model="contentStore.quality">
                                 <DropdownMenuRadioItem :value="SongQuality.low" class="relative flex pl-7 py-1 flex-row justify-start items-center hover:bg-neutral-800 rounded-md cursor-pointer"  @click="(event: any) => event.stopPropagation()" @select="(event) => handleQualityChange(event, SongQuality.low)">
                                     <DropdownMenuItemIndicator class="absolute left-1 top-2.5">
                                             <FaCheck />
@@ -236,13 +233,13 @@
                 </RouterLink>
                 <HiSpeakerWave
                     @click="toogleMute"
-                    v-if="volume !== 0"
+                    v-if="playerStore.volume !== 0"
                     size="34"
                     class="cursor-pointer"
                 />
                 <HiSpeakerXMark @click="toogleMute" v-else size="34" class="cursor-pointer" />
                 <PlayerVolumeSlider
-                    :value="volume"
+                    :value="playerStore.volume"
                     @volume-change="(newVolume) => changeVolume(newVolume)"
                 />
             </div>
