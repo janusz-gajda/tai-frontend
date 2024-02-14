@@ -122,7 +122,7 @@
             >
                 Select files
             </button>
-            <div class="my-4">
+            <div class="flex flex-col my-4 gap-y-4">
                 <UploadAlbum
                     @delete-song="(songIndex) => album.songs.splice(songIndex, 1)"
                     @delete-album="filesMetadata.splice(index, 1)"
