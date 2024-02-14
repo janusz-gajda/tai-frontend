@@ -49,12 +49,12 @@ import router from '@/router'
                 <button
                     class="rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition"
                 >
-                    <HiHome class="text-black" size="20" />
+                    <HiHome @click="$router.push({name: 'home'})" class="text-black" size="20" />
                 </button>
                 <button
                     class="rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition"
                 >
-                    <BiSearch class="text-black" size="20" />
+                    <BiSearch @click="$router.push({name: 'search'})" class="text-black" size="20" />
                 </button>
             </div>
             <div v-if="userStore.id === 0" class="flex justify-between items-center gap-x-4">
