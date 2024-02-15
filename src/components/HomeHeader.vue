@@ -8,9 +8,8 @@
     import {useUserStore} from '@/stores/user'
     import SettingsButton from './SettingsButton.vue'
     import {useContentStore} from '@/stores/content'
-    import {connect} from 'http2'
-import { usePlayerStore } from '@/stores/player'
-import router from '@/router'
+    import {usePlayerStore} from '@/stores/player'
+    import router from '@/router'
 
     const userStore = useUserStore()
     const modalStore = useModalStore()
@@ -24,7 +23,7 @@ import router from '@/router'
     }
 
     function handleSettings() {
-        router.push({name: "settings"})
+        router.push({name: 'settings'})
     }
 </script>
 
@@ -54,7 +53,11 @@ import router from '@/router'
                 <button
                     class="rounded-full p-2 bg-white flex items-center justify-center hover:opacity-75 transition"
                 >
-                    <BiSearch @click="$router.push({name: 'search'})" class="text-black" size="20" />
+                    <BiSearch
+                        @click="$router.push({name: 'search'})"
+                        class="text-black"
+                        size="20"
+                    />
                 </button>
             </div>
             <div v-if="userStore.id === 0" class="flex justify-between items-center gap-x-4">

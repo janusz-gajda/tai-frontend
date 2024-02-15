@@ -1,10 +1,9 @@
 <script setup lang="ts">
     import defaultCoverUrl from '@/assets/images/music-placeholder.png'
-    import PlayButton from './player/PlayButton.vue'
     import type {AlbumFrontend} from '@/types/album'
     import {BsPauseFill, BsPlayFill} from 'vue3-icons/bs'
     import router from '@/router'
-import { usePlayerStore } from '@/stores/player'
+    import {usePlayerStore} from '@/stores/player'
     const props = defineProps<{
         album: AlbumFrontend
     }>()
@@ -36,8 +35,14 @@ import { usePlayerStore } from '@/stores/player'
             </div>
         </div>
         <div @click="$emit('playAlbum')" class="absolute bottom-24 right-5">
-            <button class="transition opacity-0 rounded-full p-2 flex items-center bg-green-500 drop-shadow-md translate translate-y-1/4 group-hover:opacity-100 hover:scale-110">
-                <BsPauseFill size="20" v-if="playerStore.isPlaying && playerStore.albumId === props.album.id" class="text-black" />
+            <button
+                class="transition opacity-0 rounded-full p-2 flex items-center bg-green-500 drop-shadow-md translate translate-y-1/4 group-hover:opacity-100 hover:scale-110"
+            >
+                <BsPauseFill
+                    size="20"
+                    v-if="playerStore.isPlaying && playerStore.albumId === props.album.id"
+                    class="text-black"
+                />
                 <BsPlayFill size="20" v-else class="text-black" />
             </button>
         </div>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
     import {ref, type Ref} from 'vue'
     import type {PlaylistFrontend} from '@/types/playlist'
-    import { DropdownMenuCheckboxItem, DropdownMenuItemIndicator } from 'radix-vue';
-    import {FaCheck, FaRegSquare} from 'vue3-icons/fa'
+    import {DropdownMenuCheckboxItem, DropdownMenuItemIndicator} from 'radix-vue'
+    import {FaCheck} from 'vue3-icons/fa'
     const props = defineProps<{
         playlist: PlaylistFrontend
     }>()
@@ -18,11 +18,7 @@
             </DropdownMenuItemIndicator>
         </DropdownMenuCheckboxItem>
         <p>{{ props.playlist.name }}</p>
-    
     </div>
-    
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

@@ -13,15 +13,13 @@
     })
 
     let value: Ref<number[]> = ref([props.value])
-    let active: Ref<boolean> = ref(props.active)
-
     function convertSeconds(seconds: number) {
         return `${Math.floor(seconds / 60)}:${seconds % 60 < 10 ? '0' : ''}${seconds % 60}`
     }
 
     watch(
         () => props.value,
-        (newValue: number, odlValue: number) => {
+        (newValue: number) => {
             value.value = [newValue]
         }
     )

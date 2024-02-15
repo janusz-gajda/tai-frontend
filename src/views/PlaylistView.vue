@@ -4,14 +4,13 @@
     import {useContentStore} from '@/stores/content'
     import {FaPlay, FaPause} from 'vue3-icons/fa'
     import {usePlayerStore} from '@/stores/player'
-    import type {SongFrontend} from '@/types/song'
     import LikeButton from '@/components/LikeButton.vue'
     import {IoMdClose} from 'vue3-icons/io'
-    import {AiOutlinePlusCircle} from 'vue3-icons/ai'
-    import defaultCoverUrl from '@/assets/images/music-placeholder.png'
-    import { useRoute } from 'vue-router'
-    import  DropdownManagePlaylists from '@/components/DropdownManagePlaylists.vue'
-import { removeFromPlaylist } from '@/api/collections'
+    import {useRoute} from 'vue-router'
+    import DropdownManagePlaylists from '@/components/DropdownManagePlaylists.vue'
+    import {removeFromPlaylist, removePlaylist} from '@/api/collections'
+    import type {PlaylistFrontend} from '@/types/playlist'
+    import router from '@/router'
 
     const props = defineProps<{
         id: number
@@ -21,6 +20,7 @@ import { removeFromPlaylist } from '@/api/collections'
     const contentStore = useContentStore()
     const playerStore = usePlayerStore()
 
+    const playlist: Ref<PlaylistFrontend | undefined> = ref(contentStore.getPlaylistById(props.id))
 
     function handlePlayChange(id: number, isCurrentSong: boolean) {
         if (isCurrentSong) {
@@ -49,16 +49,31 @@ import { removeFromPlaylist } from '@/api/collections'
         removeFromPlaylist(id, props.id).then(() => {
             contentStore.removeSongFromPlaylist(props.id, id)
         })
+    }
 
+    function handleRemovePlaylist() {
+        const confirmed: boolean = confirm(
+            `Are you sure you want to remove the playlist ${playlist.value?.name}?`
+        )
+        if (confirmed && playlist.value) {
+            removePlaylist(playlist.value.id).then(() => {
+                //@ts-ignore
+                contentStore.removePlaylist(playlist.value.id)
+                router.push({name: 'home'})
+            })
+        }
     }
 
     watch(
-        () => route.params.id, 
-         newId => {
+        () => route.params.id,
+        (newId) => {
             playlist.value = contentStore.getPlaylistById(newId as unknown as number)
-        })
+        }
+    )
 
-    const playlist = ref(contentStore.getPlaylistById(props.id))
+    contentStore.$subscribe((mutation, state) => {
+        playlist.value = state.playlists.find((playlist) => playlist.id === props.id)
+    })
 </script>
 
 <template>
@@ -67,30 +82,38 @@ import { removeFromPlaylist } from '@/api/collections'
         <main class="mt-2 mb-40 px-6" v-if="playlist">
             <div class="flex justify-between items-center">
                 <div class="flex justify-start mb-3">
-                    <div class="max-w-[160px] rounded-md">
-                    </div>
+                    <div class="max-w-[160px] rounded-md"></div>
 
                     <div class="flex flex-col justify-end mb-3 ml-2">
                         <p class="text-white font-medium text-3xl">{{ playlist.name }}</p>
                         <p class="text-neutral-400 text-xl">{{ playlist?.description }}</p>
                     </div>
                 </div>
-                <div class="relative">
-                    <div v-if="playlist.songs.length > 0"
+                <div class="flex justify-end items-center gap-x-3">
+                    <div
+                        v-if="playlist.songs.length > 0"
                         @click="playPlaylist"
-                        class="transition rounded-full flex items-center justify-center bg-green-500 p-2 drop-shadow-md right-5 opacity-100 hover:scale-110 cursor-pointer"
+                        class="transition rounded-full flex items-center justify-center bg-green-500 p-3 drop-shadow-md opacity-100 hover:scale-110 cursor-pointer"
                     >
                         <FaPlay
-                            size="25"
+                            size="20"
                             v-if="!playerStore.isPlaying || playerStore.albumId !== playlist?.id"
                             class="text-black"
                         />
-                        <FaPause size="25" v-else class="text-black" />
+                        <FaPause size="20" v-else class="text-black" />
+                    </div>
+                    <div>
+                        <IoMdClose
+                            @click="handleRemovePlaylist"
+                            aria-label="Delete playlist"
+                            class="cursor-pointer hover:text-red-500 transition"
+                            size="40"
+                        />
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 gap-y-2">
+            <div class="grid grid-cols-1 gap-y-2 mb-30">
                 <div
                     v-for="(song, index) in playlist?.songs"
                     :key="song.id"

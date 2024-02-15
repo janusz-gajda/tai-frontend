@@ -5,12 +5,9 @@
     import Input from './Input.vue'
     import {useUserStore} from '@/stores/user'
     import {login, loginGoogle} from '@/api/auth'
-    import {ResponseError} from '@/types/responses'
     import type {User} from '@/types/user'
     import type {CallbackTypes} from 'vue3-google-login'
-
-    import router from '@/router'
-import { useContentStore } from '@/stores/content'
+    import {useContentStore} from '@/stores/content'
 
     const userStore = useUserStore()
     const contentStore = useContentStore()

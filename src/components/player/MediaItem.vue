@@ -1,7 +1,6 @@
 <script setup lang="ts">
     import defaultUrl from '@/assets/images/music-placeholder.png'
     import type {SongFrontend} from '@/types/song'
-    import {AspectRatio} from 'radix-vue'
     const props = defineProps<{
         song: SongFrontend | null
     }>()

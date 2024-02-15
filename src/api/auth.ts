@@ -1,5 +1,5 @@
 import {ResponseError} from '@/types/responses'
-import {instance, getJWT, setJWT, parseOk} from './base'
+import {instance, parseOk} from './base'
 import type {User} from '@/types/user'
 import {AxiosError} from 'axios'
 import type {CallbackTypes} from 'vue3-google-login'
@@ -24,7 +24,7 @@ export async function login(username: string, password: string): Promise<User> {
 }
 
 export async function register(username: string, email: string, password: string): Promise<User> {
-    try{
+    try {
         const response = await instance.post('auth/register', {
             name: username,
             email: email,
@@ -37,7 +37,7 @@ export async function register(username: string, email: string, password: string
             email: data.email,
             googleId: data.googleId
         }
-    } catch(err) {
+    } catch (err) {
         if (err instanceof AxiosError) throw new ResponseError(err)
         else throw err
     }

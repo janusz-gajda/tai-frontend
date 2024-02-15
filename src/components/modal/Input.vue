@@ -11,15 +11,13 @@
         errFun: (value: string) => string
     }>()
 
-
     const model = ref(props.value || '')
 
     const error: Ref<string> = ref('')
 
-    watch(model, (newValue, oldValue) => {
+    watch(model, (newValue) => {
         emit('update:value', newValue)
         error.value = props.errFun(newValue)
-        
     })
 </script>
 

@@ -1,11 +1,8 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-    import {ref} from 'vue'
     import PlayerContent from './PlayerContent.vue'
-    import type {SongFrontend} from '@/types/song.ts'
     import {usePlayerStore} from '@/stores/player'
     const palyerStore = usePlayerStore()
-
 </script>
 
 <template>

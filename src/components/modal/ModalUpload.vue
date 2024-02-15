@@ -7,9 +7,11 @@
     import type {SongUpload} from '@/types/song'
     import {uploadSongs} from '@/api/upload'
     import {useContentStore} from '@/stores/content'
-    import { useUserStore } from '@/stores/user'
+    import {useUserStore} from '@/stores/user'
+    import {ProgressIndicator, ProgressRoot} from 'radix-vue'
 
     const userStore = useUserStore()
+    const progressLabel: Ref<string> = ref('')
 
     async function fileChanged(event: Event): Promise<AlbumUpload[]> {
         const target = event.target as HTMLInputElement
@@ -74,12 +76,11 @@
                     )
                 }
             }
+            alert("Upload has started, please don't leave this page")
             uploadSongs(filesToUpload)
                 .then(() => {
-                    console.log('File upload completed')
+                    alert('File upload completed')
                     contentStore.refreshContent(userStore.id)
-                    console.log(contentStore.songs)
-                    console.log(contentStore.albums)
                 })
                 .catch((err) => {
                     error.value = err.message
@@ -98,6 +99,8 @@
     function selectFiles() {
         fileInput.value?.click()
     }
+
+    console.log(contentStore.uploadProgress)
 </script>
 
 <template>
@@ -109,6 +112,28 @@
         :error="error"
     >
         <div class="gap-x-3">
+            <div
+                class="flex flex-col justify-center items-center gap-y-3"
+                v-if="contentStore.uploadMax > 0"
+            >
+                <ProgressRoot
+                    v-model="contentStore.uploadProgress"
+                    :max="contentStore.uploadMax"
+                    :get-value-label="
+                        (value: number, max: number) => {
+                            progressLabel = `${value}/${max} completed (${((value / max) * 100).toFixed(2)}%)`
+                            return ''
+                        }
+                    "
+                    class="block w-full h-3 overflow-hidden rounded-full"
+                >
+                    <ProgressIndicator
+                        :style="`transform: translateX(-${100 - (contentStore.uploadProgress / contentStore.uploadMax) * 100}%)`"
+                        class="w-10/12 mx-auto h-full bg-green-700 rounded-full duration-[660ms] ease-[cubic-bezier(0.65, 0, 0.35, 1)] transition-transform"
+                    />
+                </ProgressRoot>
+                <p class="text-center text-neutral-400">{{ progressLabel }}</p>
+            </div>
             <input
                 ref="fileInput"
                 @change="handeFileChanged($event)"

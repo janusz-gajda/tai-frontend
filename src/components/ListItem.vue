@@ -5,11 +5,11 @@
     const props = defineProps<{
         image: string | undefined
         name: string
-        href: string
+        onClickRouteName: string
     }>()
 
     function onClick() {
-        router.push(props.href)
+        router.push({name: props.onClickRouteName})
     }
 </script>
 

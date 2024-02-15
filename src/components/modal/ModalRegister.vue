@@ -1,12 +1,12 @@
 <script setup lang="ts">
     import ModalTeamplate from './ModalTeamplate.vue'
     import {FaGoogle} from 'vue3-icons/fa'
-    import {ref, watch, type Ref} from 'vue'
+    import {ref, type Ref} from 'vue'
     import Input from './Input.vue'
-    import { register } from '@/api/auth';
-    import type { User } from '@/types/user';
-    import { useUserStore } from '@/stores/user';
-    import type { ResponseError } from '@/types/responses';
+    import {register} from '@/api/auth'
+    import type {User} from '@/types/user'
+    import {useUserStore} from '@/stores/user'
+    import type {ResponseError} from '@/types/responses'
 
     const props = defineProps<{
         isOpen: boolean
@@ -55,14 +55,18 @@
     }
 
     function handleRegister() {
-        if(usernameError(username.value) === '' 
-            && emailError(email.value) === '' 
-            && passwordError(password.value) === '' 
-            && repeatPasswordError(repeatPassword.value) === '') {
-                register(username.value, email.value, password.value).then((user: User) => {
+        if (
+            usernameError(username.value) === '' &&
+            emailError(email.value) === '' &&
+            passwordError(password.value) === '' &&
+            repeatPasswordError(repeatPassword.value) === ''
+        ) {
+            register(username.value, email.value, password.value)
+                .then((user: User) => {
                     useUserStore().setUser(user)
                     emit('update:isOpen', false)
-                }).catch((err: ResponseError) => {
+                })
+                .catch((err: ResponseError) => {
                     error.value = err.message
                 })
         }
@@ -102,7 +106,10 @@
                 @update:value="(value) => (repeatPassword = value)"
                 :err-fun="repeatPasswordError"
             />
-            <button @click="handleRegister" class="w-full rounded-full bg-green-500 px-4 py-3 mt-10 text-white font-bold">
+            <button
+                @click="handleRegister"
+                class="w-full rounded-full bg-green-500 px-4 py-3 mt-10 text-white font-bold"
+            >
                 Register
             </button>
             <button

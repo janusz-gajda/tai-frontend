@@ -10,13 +10,10 @@
         VisuallyHidden
     } from 'radix-vue'
     import defaultCoverUrl from '@/assets/images/music-placeholder.png'
-    import {ref, watch} from 'vue'
     import {IoMdClose} from 'vue3-icons/io'
     import {usePlayerStore} from '@/stores/player'
-    import PlayerVolumeSlider from '@/components/player/PlayerVolumeSlider.vue'
     import {BsPauseFill, BsPlayFill} from 'vue3-icons/bs'
     import {AiFillStepBackward, AiFillStepForward} from 'vue3-icons/ai'
-    import {HiSpeakerXMark, HiSpeakerWave} from 'vue3-icons/hi2'
     import PlayerDurationSlider from '@/components/player/PlayerDurationSlider.vue'
 
     const playerStore = usePlayerStore()

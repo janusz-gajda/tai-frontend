@@ -1,5 +1,5 @@
 import type {Collection} from '@/types/collections'
-import {get, post, put} from './base'
+import {get, post, put, del} from './base'
 
 export async function getCollections(type: string = 'ALL'): Promise<Collection[]> {
     return await get('collections', {type: type})
@@ -7,19 +7,21 @@ export async function getCollections(type: string = 'ALL'): Promise<Collection[]
 
 export async function createPlaylist(name: string, description: string): Promise<Collection> {
     return await post('collections', {
-        type: "PLAYLIST",
+        type: 'PLAYLIST',
         access: 'PRIVATE',
         name: name,
-        description: description,
+        description: description
     })
+}
+
+export async function removePlaylist(id: number): Promise<Collection> {
+    return await del(`collections/${id}`)
 }
 
 export async function addToPlaylist(songId: number, playlistId: number): Promise<Collection> {
     return await post(`collections/${playlistId}/song/${songId}`)
-    
 }
 
 export async function removeFromPlaylist(songId: number, playlistId: number): Promise<Collection> {
     return await put(`collections/${playlistId}/song/${songId}`)
-    
 }

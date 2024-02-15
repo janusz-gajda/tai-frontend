@@ -1,8 +1,6 @@
 <script setup lang="ts">
     import {twMerge} from 'tailwind-merge'
-    import {useModalStore} from '@/stores/modal'
 
-    const modalStore = useModalStore()
     interface Props {
         disabled?: boolean
         type?: 'button' | 'submit' | 'reset' | undefined
@@ -24,7 +22,6 @@
         "
     >
         <slot />
-        <!--bg-green-500-->
     </button>
 </template>
 

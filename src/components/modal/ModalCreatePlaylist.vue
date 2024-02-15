@@ -1,11 +1,11 @@
 <script setup lang="ts">
     import {ref, type Ref} from 'vue'
-    import ModalTeamplate from './ModalTeamplate.vue';
+    import ModalTeamplate from './ModalTeamplate.vue'
     import Input from './Input.vue'
-    import { createPlaylist } from '@/api/collections';
+    import {createPlaylist} from '@/api/collections'
 
-    import { useContentStore } from '@/stores/content';
-    import { useUserStore } from '@/stores/user';
+    import {useContentStore} from '@/stores/content'
+    import {useUserStore} from '@/stores/user'
 
     const emit = defineEmits(['update:isOpen'])
 
@@ -21,16 +21,15 @@
     let name: string = ''
     let description: string = ''
 
-
-
-
-    function handleSubmit(){
-        createPlaylist(name, description).then((res) => {
-            contentStore.refreshContent(userStore.id)
-            emit('update:isOpen', false)
-        }).catch((err) => {
-            console.log(err)
-        })
+    function handleSubmit() {
+        createPlaylist(name, description)
+            .then(() => {
+                contentStore.refreshContent(userStore.id)
+                emit('update:isOpen', false)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     }
 </script>
 
@@ -50,7 +49,7 @@
                 @update:value="(value) => (name = value)"
                 :err-fun="
                     (value: string) => {
-                        if(value.length === 0) return 'Name cannot be empty'
+                        if (value.length === 0) return 'Name cannot be empty'
                         return ''
                     }
                 "
@@ -72,11 +71,8 @@
             >
                 Create palylist
             </button>
-            
         </div>
     </ModalTeamplate>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

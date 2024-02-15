@@ -1,13 +1,10 @@
 <script setup lang="ts">
-    import {ref, type Ref} from 'vue'
     import {FaPlay, FaPause} from 'vue3-icons/fa'
-    
+
     import {usePlayerStore} from '@/stores/player'
     import type {SongFrontend} from '@/types/song'
     import LikeButton from '../LikeButton.vue'
-    import {BsThreeDots} from 'vue3-icons/bs'
     import {IoMdClose} from 'vue3-icons/io'
-    import {AiOutlinePlusCircle} from 'vue3-icons/ai'
     import DropdownManagePlaylists from '@/components/DropdownManagePlaylists.vue'
 
     const props = defineProps<{
@@ -20,7 +17,6 @@
         active: boolean
     }>()
 
-    
     const playerStore = usePlayerStore()
 
     function handlePlayChange() {

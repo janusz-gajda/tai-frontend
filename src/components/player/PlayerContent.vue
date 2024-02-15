@@ -7,29 +7,37 @@
     import {AiFillStepBackward, AiFillStepForward} from 'vue3-icons/ai'
     import {HiSpeakerXMark, HiSpeakerWave} from 'vue3-icons/hi2'
     import PlayerDurationSlider from './PlayerDurationSlider.vue'
-    import {TbPlaylist, TbPremiumRights} from 'vue3-icons/tb'
+    import {TbPlaylist} from 'vue3-icons/tb'
     import type {SongFrontend} from '@/types/song'
-    import {Howl, Howler} from 'howler'
+    import {Howl} from 'howler'
     import {usePlayerStore} from '@/stores/player'
     import {useModalStore} from '@/stores/modal'
     import {useContentStore} from '@/stores/content'
-    import  SettingsButton from '../SettingsButton.vue'
-    import { DropdownMenuRoot, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuPortal, DropdownMenuRadioItem, DropdownMenuRadioGroup, DropdownMenuItemIndicator } from 'radix-vue'
+    import SettingsButton from '../SettingsButton.vue'
+    import {
+        DropdownMenuRoot,
+        DropdownMenuTrigger,
+        DropdownMenuContent,
+        DropdownMenuLabel,
+        DropdownMenuPortal,
+        DropdownMenuRadioItem,
+        DropdownMenuRadioGroup,
+        DropdownMenuItemIndicator
+    } from 'radix-vue'
     import {SongQuality} from '@/types/song'
-    import { FaCheck } from 'vue3-icons/fa'
+    import {FaCheck} from 'vue3-icons/fa'
 
     const props = defineProps<{
         song: SongFrontend | null
     }>()
-    console.log(props.song)
 
     const modalStore = useModalStore()
     const playerStore = usePlayerStore()
     const contentStore = useContentStore()
     const emit = defineEmits(['prevSong', 'nextSong'])
-    
+
     const menu: Ref<boolean> = ref(false)
-    
+
     let updateSeekPositionId: NodeJS.Timeout
 
     let sound: Howl = new Howl({
@@ -110,7 +118,6 @@
         contentStore.quality = quality
     }
 
-
     watch(
         () => playerStore.isPlaying,
         (isPlaying) => {
@@ -190,37 +197,70 @@
             <div class="flex items-center gap-x-2 w-[160px]">
                 <DropdownMenuRoot v-model:open="menu">
                     <DropdownMenuTrigger>
-                        <SettingsButton class="scale-75"/>
+                        <SettingsButton class="scale-75" />
                     </DropdownMenuTrigger>
                     <DropdownMenuPortal>
                         <DropdownMenuContent
                             class="w-40 bg-neutral-900 border-neutral-800 border-solid border-2 rounded-md items-center justify-center gap-y-2"
                         >
                             <DropdownMenuLabel>
-                                <p class="text-neutral-400 font-semibold ml-2 mb-2">Select quality</p>
+                                <p class="text-neutral-400 font-semibold ml-2 mb-2">
+                                    Select quality
+                                </p>
                             </DropdownMenuLabel>
                             <DropdownMenuRadioGroup v-model="contentStore.quality">
-                                <DropdownMenuRadioItem :value="SongQuality.low" class="relative flex pl-7 py-1 flex-row justify-start items-center hover:bg-neutral-800 rounded-md cursor-pointer"  @click="(event: any) => event.stopPropagation()" @select="(event) => handleQualityChange(event, SongQuality.low)">
+                                <DropdownMenuRadioItem
+                                    :value="SongQuality.low"
+                                    class="relative flex pl-7 py-1 flex-row justify-start items-center hover:bg-neutral-800 rounded-md cursor-pointer"
+                                    @click="(event: any) => event.stopPropagation()"
+                                    @select="(event) => handleQualityChange(event, SongQuality.low)"
+                                >
                                     <DropdownMenuItemIndicator class="absolute left-1 top-2.5">
-                                            <FaCheck />
+                                        <FaCheck />
                                     </DropdownMenuItemIndicator>
                                     <p>Low</p>
                                 </DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem :value="SongQuality.medium" class="relative flex pl-7 py-1 flex-row justify-start items-center hover:bg-neutral-800 rounded-md cursor-pointer"  @click="(event: any) => event.stopPropagation()" @select="(event) => handleQualityChange(event, SongQuality.medium)">
+                                <DropdownMenuRadioItem
+                                    :value="SongQuality.medium"
+                                    class="relative flex pl-7 py-1 flex-row justify-start items-center hover:bg-neutral-800 rounded-md cursor-pointer"
+                                    @click="(event: any) => event.stopPropagation()"
+                                    @select="
+                                        (event) => handleQualityChange(event, SongQuality.medium)
+                                    "
+                                >
                                     <DropdownMenuItemIndicator class="absolute left-1 top-2.5">
-                                            <FaCheck />
+                                        <FaCheck />
                                     </DropdownMenuItemIndicator>
                                     <p>Medium</p>
                                 </DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem :value="SongQuality.high" class="relative flex pl-7 py-1 flex-row justify-start items-center hover:bg-neutral-800 rounded-md cursor-pointer"  @click="(event: any) => event.stopPropagation()" @select="(event) => handleQualityChange(event, SongQuality.high)">
+                                <DropdownMenuRadioItem
+                                    :value="SongQuality.high"
+                                    class="relative flex pl-7 py-1 flex-row justify-start items-center hover:bg-neutral-800 rounded-md cursor-pointer"
+                                    @click="(event: any) => event.stopPropagation()"
+                                    @select="
+                                        (event) => handleQualityChange(event, SongQuality.high)
+                                    "
+                                >
                                     <DropdownMenuItemIndicator class="absolute left-1 top-2.5">
-                                            <FaCheck />
+                                        <FaCheck />
                                     </DropdownMenuItemIndicator>
                                     <p>High</p>
                                 </DropdownMenuRadioItem>
-                                <DropdownMenuRadioItem :value="SongQuality.ultra" class="relative flex pl-7 py-1 flex-row justify-start items-center hover:bg-neutral-800 rounded-md cursor-pointer"  @click="(event: any) => {event.preventDefault(); event.stopPropagation()}" @select="(event) => handleQualityChange(event, SongQuality.ultra)">
+                                <DropdownMenuRadioItem
+                                    :value="SongQuality.ultra"
+                                    class="relative flex pl-7 py-1 flex-row justify-start items-center hover:bg-neutral-800 rounded-md cursor-pointer"
+                                    @click="
+                                        (event: any) => {
+                                            event.preventDefault()
+                                            event.stopPropagation()
+                                        }
+                                    "
+                                    @select="
+                                        (event) => handleQualityChange(event, SongQuality.ultra)
+                                    "
+                                >
                                     <DropdownMenuItemIndicator class="absolute left-1 top-2.5">
-                                            <FaCheck />
+                                        <FaCheck />
                                     </DropdownMenuItemIndicator>
                                     <p>Ultra</p>
                                 </DropdownMenuRadioItem>

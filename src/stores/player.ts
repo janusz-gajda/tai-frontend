@@ -15,6 +15,7 @@ export const usePlayerStore = defineStore(
         const newTimeElapsed: Ref<number> = ref(0)
         const albumId: Ref<number> = ref(0)
         const playlistId: Ref<number> = ref(0)
+        const isPlaylingFavourites: Ref<boolean> = ref(false)
 
         function nextSong() {
             const nextIndex =
@@ -54,6 +55,7 @@ export const usePlayerStore = defineStore(
                 isPlaying.value = true
             }
             albumId.value = 0
+            playlistId.value = 0
         }
 
         function changeSongAlbum(id: number, albId: number) {
@@ -74,10 +76,13 @@ export const usePlayerStore = defineStore(
             playlistId.value = plId
         }
 
-        //TODO: przerobić podczas spinania z backendem
-        function likeUnlikeSong(id: number) {
-            const index = currentQueue.value.findIndex((song) => song.id === id)
-            currentQueue.value[index].isLiked = !currentQueue.value[index].isLiked
+        function changeSongFavourites(id: number) {
+            currentSong.value =
+                currentQueue.value[currentQueue.value.findIndex((song) => song.id === id)]
+            if (!isPlaying.value) {
+                isPlaying.value = true
+            }
+            isPlaylingFavourites.value = true
         }
 
         function deleteFromQueue(id: number) {
@@ -94,6 +99,8 @@ export const usePlayerStore = defineStore(
 
             if (index === -1) addSong(song)
             albumId.value = 0
+            playlistId.value = 0
+            isPlaylingFavourites.value = false
             return changeSong(song.id)
         }
 
@@ -101,15 +108,24 @@ export const usePlayerStore = defineStore(
             currentQueue.value = songs
             currentSong.value = songs[0]
             isPlaying.value = true
-            albumId.value = id,
-            playlistId.value = 0
+            ;(albumId.value = id), (playlistId.value = 0)
+            isPlaylingFavourites.value = false
         }
 
         function playPlaylist(songs: SongFrontend[], id: number) {
             currentQueue.value = songs
             currentSong.value = songs[0]
             isPlaying.value = true
-            playlistId.value = id, 
+            ;(playlistId.value = id), (albumId.value = 0)
+            isPlaylingFavourites.value = false
+        }
+
+        function playFavourites(songs: SongFrontend[]) {
+            currentQueue.value = songs
+            currentSong.value = songs[0]
+            isPlaying.value = true
+            isPlaylingFavourites.value = true
+            playlistId.value = 0
             albumId.value = 0
         }
 
@@ -165,12 +181,12 @@ export const usePlayerStore = defineStore(
             newTimeElapsed,
             albumId,
             playlistId,
+            isPlaylingFavourites,
             nextSong,
             previousSong,
             addSong,
             addCollection,
             changeSong,
-            likeUnlikeSong,
             deleteFromQueue,
             playSong,
             mute,
@@ -181,8 +197,10 @@ export const usePlayerStore = defineStore(
             replaceWithCollection,
             playAlbum,
             playPlaylist,
+            playFavourites,
             changeSongAlbum,
             changeSongPlaylist,
+            changeSongFavourites,
             clear
         }
     },

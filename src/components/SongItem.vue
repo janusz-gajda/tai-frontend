@@ -1,18 +1,15 @@
 <script setup lang="ts">
     import defaultCoverUrl from '@/assets/images/music-placeholder.png'
-    import PlayButton from './player/PlayButton.vue'
     import {BsPauseFill, BsPlayFill} from 'vue3-icons/bs'
-    import router from '@/router'
-import { usePlayerStore } from '@/stores/player'
-import type { SongFrontend } from '@/types/song'
+    import {usePlayerStore} from '@/stores/player'
+    import type {SongFrontend} from '@/types/song'
     const props = defineProps<{
         song: SongFrontend
     }>()
 
     const playerStore = usePlayerStore()
 
-    function handleClick() {
-    }
+    function handleClick() {}
 </script>
 
 <template>
@@ -26,7 +23,7 @@ import type { SongFrontend } from '@/types/song'
                     By {{ props.song.author }}
                 </p>
             </div>
-            
+
             <div class="relative aspect-square w-full h-full rounded-md overflow-hidden">
                 <img
                     :src="props.song.coverUrl ? props.song.coverUrl : defaultCoverUrl"
@@ -36,8 +33,14 @@ import type { SongFrontend } from '@/types/song'
             </div>
         </div>
         <div @click="$emit('playSong')" class="absolute bottom-3 right-5">
-            <button class="transition opacity-0 rounded-full p-2 flex items-center bg-green-500 drop-shadow-md translate translate-y-1/4 group-hover:opacity-100 hover:scale-110">
-                <BsPauseFill size="20" v-if="playerStore.isPlaying && playerStore.currentSong?.id === props.song.id" class="text-black" />
+            <button
+                class="transition opacity-0 rounded-full p-2 flex items-center bg-green-500 drop-shadow-md translate translate-y-1/4 group-hover:opacity-100 hover:scale-110"
+            >
+                <BsPauseFill
+                    size="20"
+                    v-if="playerStore.isPlaying && playerStore.currentSong?.id === props.song.id"
+                    class="text-black"
+                />
                 <BsPlayFill size="20" v-else class="text-black" />
             </button>
         </div>

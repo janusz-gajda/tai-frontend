@@ -1,5 +1,4 @@
 <script setup lang="ts">
-    import {RouterLink} from 'vue-router'
     import {BiSearch, BiSolidHome} from 'vue3-icons/bi'
     import SideBarBox from './SideBarBox.vue'
     import SideBarItem from './SideBarItem.vue'

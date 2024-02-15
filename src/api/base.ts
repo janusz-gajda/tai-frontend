@@ -24,13 +24,12 @@ export const instance: AxiosInstance = axios.create({
 })
 
 export function parseOk(response: response200): any {
-    if(response._token)
-        setJWT(response._token)
+    if (response._token) setJWT(response._token)
     return response.payload
 }
 
 export async function get(route: string, param: any = {}): Promise<any> {
-    try{
+    try {
         const response = await instance.get(route, {
             params: param,
             headers: {
@@ -38,40 +37,50 @@ export async function get(route: string, param: any = {}): Promise<any> {
             }
         })
         return parseOk(response.data)
-    } catch(err) {
+    } catch (err) {
         if (err instanceof AxiosError) throw new ResponseError(err)
         else throw err
     }
-    
 }
 
 export async function post(route: string, payload: any = {}): Promise<any> {
-    try{
+    try {
         const response = await instance.post(route, payload, {
             headers: {
                 Authorization: `Bearer ${getJWT()}`
             }
         })
         return parseOk(response.data)
-    } catch(err) {
+    } catch (err) {
         if (err instanceof AxiosError) throw new ResponseError(err)
         else throw err
     }
-    
 }
 
 export async function put(route: string, payload: any = {}): Promise<any> {
-    try{
+    try {
         const response = await instance.put(route, payload, {
             headers: {
                 Authorization: `Bearer ${getJWT()}`
             }
         })
         return parseOk(response.data)
-    } catch(err) {
+    } catch (err) {
         if (err instanceof AxiosError) throw new ResponseError(err)
         else throw err
     }
-    
-    
+}
+
+export async function del(route: string): Promise<any> {
+    try {
+        const response = await instance.delete(route, {
+            headers: {
+                Authorization: `Bearer ${getJWT()}`
+            }
+        })
+        return parseOk(response.data)
+    } catch (err) {
+        if (err instanceof AxiosError) throw new ResponseError(err)
+        else throw err
+    }
 }

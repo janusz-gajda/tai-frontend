@@ -5,7 +5,7 @@
     import ModalMobilePlayer from '../modal/ModalMobilePlayer.vue'
     import {onMounted, onUnmounted, ref} from 'vue'
     import ModalUpload from '../modal/ModalUpload.vue'
-import ModalCreatePlaylist from '../modal/ModalCreatePlaylist.vue'
+    import ModalCreatePlaylist from '../modal/ModalCreatePlaylist.vue'
     const modalStore = useModalStore()
 
     const md = 768

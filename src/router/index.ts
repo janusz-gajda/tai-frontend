@@ -5,6 +5,7 @@ import QueueView from '@/views/QueueView.vue'
 import AlbumView from '@/views/AlbumView.vue'
 import PlaylistView from '@/views/PlaylistView.vue'
 import SettingsView from '@/views/SettingsView.vue'
+import FavouritesView from '@/views/FavouritesView.vue'
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,6 +41,11 @@ const router = createRouter({
             path: '/settings',
             name: 'settings',
             component: SettingsView
+        },
+        {
+            path: '/favourites',
+            name: 'favourites',
+            component: FavouritesView
         }
     ]
 })

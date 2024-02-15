@@ -2,11 +2,9 @@
     import HomeHeader from '@/components/HomeHeader.vue'
     import ListItem from '@/components/ListItem.vue'
     import likedUrl from '@/assets/images/liked.png'
-    import {usePlayerStore} from '@/stores/player'
     import {useContentStore} from '@/stores/content'
     import PageContent from '@/components/PageContent.vue'
 
-    const palyerStore = usePlayerStore()
     const contentStore = useContentStore()
 </script>
 
@@ -18,7 +16,11 @@
                 <div
                     class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-3 mt-4"
                 >
-                    <ListItem :image="likedUrl" name="Liked songs" href="" />
+                    <ListItem
+                        :image="likedUrl"
+                        name="Liked songs"
+                        on-click-route-name="favourites"
+                    />
                 </div>
             </div>
         </HomeHeader>
